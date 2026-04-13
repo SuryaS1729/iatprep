@@ -15,6 +15,13 @@ type WeekPlan = {
 
 type ProgressMap = Record<string, Record<string, boolean>>
 
+type SubjectName = 'Physics' | 'Chemistry' | 'Math'
+
+type SubjectPlan = {
+  name: SubjectName
+  chapters: string[]
+}
+
 const initialData: WeekPlan[] = [
   {
     week: 'Week 1',
@@ -186,6 +193,106 @@ const initialData: WeekPlan[] = [
 
 const storageKey = 'iat-progress'
 
+const subjectData: SubjectPlan[] = [
+  {
+    name: 'Physics',
+    chapters: [
+      'Units & Dimensions',
+      'Vectors',
+      'Kinematics',
+      'Laws of Motion',
+      'Work, Energy & Power',
+      'System of Particles',
+      'Rotation',
+      'Properties of Matter',
+      'Fluid Mechanics',
+      'Waves',
+      'Kinetic Theory of Gases',
+      'Thermodynamics',
+      'Simple Harmonic Motion',
+      'Gravitation',
+      'Complete Class 11 Physics',
+      'Electrostatics',
+      'Capacitors',
+      'Current Electricity',
+      'Magnetism',
+      'Electromagnetic Induction',
+      'Alternating Current',
+      'EM Waves',
+      'Ray Optics',
+      'Wave Optics',
+      'Dual Nature of Matter',
+      'Atomic Structure (Modern)',
+      'Nuclear Physics',
+      'Semiconductors',
+      'Complete Class 12 Physics',
+    ],
+  },
+  {
+    name: 'Chemistry',
+    chapters: [
+      'Some Basic Concepts',
+      'Atomic Structure',
+      'Periodic Table',
+      'Chemical Equilibrium',
+      'Redox Reactions',
+      'Thermodynamics (Chem)',
+      'Chemical Bonding',
+      'Introduction to Organic Chemistry',
+      'Hydrocarbons',
+      'Complete Class 11 Chemistry',
+      'Solutions',
+      'Electrochemistry',
+      'Chemical Kinetics',
+      'Coordination Compounds',
+      'd & f Block',
+      'Haloalkanes & Haloarenes',
+      'Alcohols Phenols Ethers',
+      'Aldehydes Ketones Carboxylic Acids',
+      'Amines',
+      'Biomolecules',
+      'Complete Class 12 Chemistry',
+    ],
+  },
+  {
+    name: 'Math',
+    chapters: [
+      'Basic Maths',
+      'Set Theory',
+      'Inequalities',
+      'Logarithm',
+      'Modulus',
+      'Functions (Basics)',
+      'Quadratic Equations',
+      'Complex Numbers',
+      'Trigonometry',
+      'Sequences',
+      'Straight Line',
+      'Circle',
+      'Parabola',
+      'Ellipse',
+      'Hyperbola',
+      'Permutations',
+      'Probability',
+      'Statistics',
+      'Binomial Theorem',
+      'Complete Class 11 Mathematics',
+      'Relations',
+      'Functions',
+      'Limits',
+      'Continuity',
+      'Differentiation',
+      'Applications of Derivatives',
+      'Integrals',
+      'Differential Equations',
+      'Matrices',
+      '3D Geometry',
+      'Vectors',
+      'Complete Class 12 Mathematics',
+    ],
+  },
+]
+
 function getCompletedCount(chapters: string[], weekProgress: Record<string, boolean> | undefined) {
   return chapters.filter((chapter) => weekProgress?.[chapter]).length
 }
@@ -202,7 +309,14 @@ function getDaysLeft(month: number, day: number) {
   return Math.round((target.getTime() - today.getTime()) / 86_400_000)
 }
 
+function getSubjectCompletedCount(chapters: string[], progress: ProgressMap) {
+  return chapters.filter((chapter) =>
+    Object.values(progress).some((weekProgress) => weekProgress?.[chapter]),
+  ).length
+}
+
 export default function App() {
+  const [activeView, setActiveView] = useState<'planner' | 'subjects'>('planner')
   const [progress, setProgress] = useState<ProgressMap>(() => {
     const saved = localStorage.getItem(storageKey)
 
@@ -240,6 +354,15 @@ export default function App() {
     }
   }, [progress])
 
+  const subjectTotals = useMemo(
+    () =>
+      subjectData.map((subject) => ({
+        ...subject,
+        completed: getSubjectCompletedCount(subject.chapters, progress),
+      })),
+    [progress],
+  )
+
   const toggleChapter = (week: string, chapter: string) => {
     setProgress((previous) => ({
       ...previous,
@@ -264,6 +387,23 @@ export default function App() {
             Track each chapter, keep your weekly tests visible, and make the six-week
             sprint feel manageable.
           </p>
+
+          <div className="view-switcher" role="tablist" aria-label="Planner views">
+            <button
+              type="button"
+              className={`view-button${activeView === 'planner' ? ' view-button-active' : ''}`}
+              onClick={() => setActiveView('planner')}
+            >
+              Weekly planner
+            </button>
+            <button
+              type="button"
+              className={`view-button${activeView === 'subjects' ? ' view-button-active' : ''}`}
+              onClick={() => setActiveView('subjects')}
+            >
+              Subject overview
+            </button>
+          </div>
 
           <div className="stats-grid">
             <article className="stat-card">
@@ -302,53 +442,103 @@ export default function App() {
         </div>
       </section>
 
-      <section className="weeks-section" aria-label="Weekly plan">
-        {initialData.map((week) => {
-          const completed = getCompletedCount(week.chapters, progress[week.week])
-          const isDone = completed === week.chapters.length
+      {activeView === 'planner' ? (
+        <section className="weeks-section" aria-label="Weekly plan">
+          {initialData.map((week) => {
+            const completed = getCompletedCount(week.chapters, progress[week.week])
+            const isDone = completed === week.chapters.length
 
-          return (
-            <article key={week.week} className="week-card">
-              <div className="week-header">
-                <div>
-                  <p className="week-kicker">{week.test}</p>
-                  {week.testDate ? (
-                    <>
-                      <p className="test-date">{week.testDate.label}</p>
-                      <p className="test-countdown">
-                        {getDaysLeft(week.testDate.month, week.testDate.day)} days left from today
-                      </p>
-                    </>
-                  ) : null}
-                  <h2>{week.week}</h2>
+            return (
+              <article key={week.week} className="week-card">
+                <div className="week-header">
+                  <div>
+                    <p className="week-kicker">{week.test}</p>
+                    {week.testDate ? (
+                      <>
+                        <p className="test-date">{week.testDate.label}</p>
+                        <p className="test-countdown">
+                          {getDaysLeft(week.testDate.month, week.testDate.day)} days left from
+                          today
+                        </p>
+                      </>
+                    ) : null}
+                    <h2>{week.week}</h2>
+                  </div>
+                  <div className={`week-badge${isDone ? ' week-badge-complete' : ''}`}>
+                    {completed}/{week.chapters.length}
+                  </div>
                 </div>
-                <div className={`week-badge${isDone ? ' week-badge-complete' : ''}`}>
-                  {completed}/{week.chapters.length}
+
+                <ul className="chapter-list">
+                  {week.chapters.map((chapter) => {
+                    const checked = progress[week.week]?.[chapter] ?? false
+
+                    return (
+                      <li key={`${week.week}-${chapter}`} className="chapter-item">
+                        <label
+                          className={`chapter-label${checked ? ' chapter-label-checked' : ''}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleChapter(week.week, chapter)}
+                          />
+                          <span>{chapter}</span>
+                        </label>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </article>
+            )
+          })}
+        </section>
+      ) : (
+        <section className="subjects-section" aria-label="Subject overview">
+          {subjectTotals.map((subject) => {
+            const percentage = Math.round((subject.completed / subject.chapters.length) * 100)
+
+            return (
+              <article key={subject.name} className="subject-card">
+                <div className="subject-header">
+                  <div>
+                    <p className="week-kicker">Subject roadmap</p>
+                    <h2>{subject.name}</h2>
+                  </div>
+
+                  <div className="subject-meta">
+                    <span className="subject-count">
+                      {subject.completed}/{subject.chapters.length}
+                    </span>
+                    <span className="subject-percent">{percentage}% covered</span>
+                  </div>
                 </div>
-              </div>
 
-              <ul className="chapter-list">
-                {week.chapters.map((chapter) => {
-                  const checked = progress[week.week]?.[chapter] ?? false
+                <div className="subject-progress" aria-hidden="true">
+                  <span style={{ width: `${percentage}%` }} />
+                </div>
 
-                  return (
-                    <li key={`${week.week}-${chapter}`} className="chapter-item">
-                      <label className={`chapter-label${checked ? ' chapter-label-checked' : ''}`}>
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => toggleChapter(week.week, chapter)}
-                        />
-                        <span>{chapter}</span>
-                      </label>
-                    </li>
-                  )
-                })}
-              </ul>
-            </article>
-          )
-        })}
-      </section>
+                <ul className="subject-list-column">
+                  {subject.chapters.map((chapter) => {
+                    const isCovered = Object.values(progress).some(
+                      (weekProgress) => weekProgress?.[chapter],
+                    )
+
+                    return (
+                      <li
+                        key={`${subject.name}-${chapter}`}
+                        className={`subject-chip${isCovered ? ' subject-chip-covered' : ''}`}
+                      >
+                        {chapter}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </article>
+            )
+          })}
+        </section>
+      )}
     </main>
   )
 }
