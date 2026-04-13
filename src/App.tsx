@@ -6,6 +6,11 @@ type WeekPlan = {
   week: string
   test: string
   chapters: string[]
+  testDate?: {
+    label: string
+    month: number
+    day: number
+  }
 }
 
 type ProgressMap = Record<string, Record<string, boolean>>
@@ -14,6 +19,11 @@ const initialData: WeekPlan[] = [
   {
     week: 'Week 1',
     test: 'Part Test 1',
+    testDate: {
+      label: 'April 20',
+      month: 3,
+      day: 20,
+    },
     chapters: [
       'Basic Maths',
       'Units & Dimensions',
@@ -51,6 +61,11 @@ const initialData: WeekPlan[] = [
   {
     week: 'Week 2',
     test: 'Part Test 2',
+    testDate: {
+      label: 'April 28',
+      month: 3,
+      day: 28,
+    },
     chapters: [
       'Properties of Matter',
       'Fluid Mechanics',
@@ -95,6 +110,11 @@ const initialData: WeekPlan[] = [
   {
     week: 'Week 4',
     test: 'Part Test 4',
+    testDate: {
+      label: 'May 7',
+      month: 4,
+      day: 7,
+    },
     chapters: [
       'Electrostatics',
       'Capacitors',
@@ -122,6 +142,11 @@ const initialData: WeekPlan[] = [
   {
     week: 'Week 5',
     test: 'Part Test 5',
+    testDate: {
+      label: 'May 16',
+      month: 4,
+      day: 16,
+    },
     chapters: [
       'EM Waves',
       'Ray Optics',
@@ -163,6 +188,18 @@ const storageKey = 'iat-progress'
 
 function getCompletedCount(chapters: string[], weekProgress: Record<string, boolean> | undefined) {
   return chapters.filter((chapter) => weekProgress?.[chapter]).length
+}
+
+function getDaysLeft(month: number, day: number) {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  let target = new Date(today.getFullYear(), month, day)
+
+  if (target < today) {
+    target = new Date(today.getFullYear() + 1, month, day)
+  }
+
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000)
 }
 
 export default function App() {
@@ -275,6 +312,14 @@ export default function App() {
               <div className="week-header">
                 <div>
                   <p className="week-kicker">{week.test}</p>
+                  {week.testDate ? (
+                    <>
+                      <p className="test-date">{week.testDate.label}</p>
+                      <p className="test-countdown">
+                        {getDaysLeft(week.testDate.month, week.testDate.day)} days left from today
+                      </p>
+                    </>
+                  ) : null}
                   <h2>{week.week}</h2>
                 </div>
                 <div className={`week-badge${isDone ? ' week-badge-complete' : ''}`}>

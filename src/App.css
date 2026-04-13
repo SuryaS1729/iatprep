@@ -33,6 +33,23 @@
   color: var(--muted);
 }
 
+.test-date,
+.test-countdown {
+  margin: 0;
+}
+
+.test-date {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.test-countdown {
+  margin-top: 0.2rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
 .hero-text {
   max-width: 32rem;
   font-size: 1.02rem;
