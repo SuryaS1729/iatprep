@@ -192,6 +192,7 @@ const initialData: WeekPlan[] = [
 ]
 
 const storageKey = 'iat-progress'
+const syllabusUrl = 'https://www.iiseradmission.in/assets/pdfs/IISER_Aptitude_Test_Syllabus_2026.pdf'
 
 const subjectData: SubjectPlan[] = [
   {
@@ -387,6 +388,17 @@ export default function App() {
             Track each chapter, keep your weekly tests visible, and make the six-week
             sprint feel manageable.
           </p>
+
+          <a
+            className="syllabus-link"
+            href={syllabusUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open the IISER Aptitude Test 2026 syllabus PDF"
+          >
+            <span className="syllabus-link-label">Open official syllabus</span>
+            <span className="syllabus-link-meta">IAT 2026 PDF</span>
+          </a>
 
           <div className="view-switcher" role="tablist" aria-label="Planner views">
             <button
