@@ -27,9 +27,9 @@ const initialData: WeekPlan[] = [
     week: 'Week 1',
     test: 'Part Test 1',
     testDate: {
-      label: 'April 20',
-      month: 3,
-      day: 20,
+      label: 'May 10',
+      month: 4,
+      day: 10,
     },
     chapters: [
       'Basic Maths',
@@ -69,9 +69,9 @@ const initialData: WeekPlan[] = [
     week: 'Week 2',
     test: 'Part Test 2',
     testDate: {
-      label: 'April 28',
-      month: 3,
-      day: 28,
+      label: 'May 13',
+      month: 4,
+      day: 13,
     },
     chapters: [
       'Properties of Matter',
@@ -107,6 +107,11 @@ const initialData: WeekPlan[] = [
   {
     week: 'Week 3',
     test: 'Part Test 3',
+    testDate: {
+      label: 'May 16',
+      month: 4,
+      day: 16,
+    },
     chapters: [
       'Complete Class 11 Physics',
       'Complete Class 11 Chemistry',
@@ -118,9 +123,9 @@ const initialData: WeekPlan[] = [
     week: 'Week 4',
     test: 'Part Test 4',
     testDate: {
-      label: 'May 7',
+      label: 'May 19',
       month: 4,
-      day: 7,
+      day: 19,
     },
     chapters: [
       'Electrostatics',
