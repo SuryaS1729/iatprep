@@ -8,7 +8,7 @@ const initialData = [
       // Physics
       "Basic Maths","Units & Dimensions","Vectors","Kinematics","Laws of Motion","Work, Energy & Power","System of Particles","Rotation",
       // Chemistry
-      "Some Basic Concepts","Atomic Structure","Periodic Table","Chemical Equilibrium","Redox Reactions",
+      "Some Basic Concepts","Atomic Structure","Periodic Table","Chemical Equilibrium","Ionic Equilibrium","Redox Reactions",
       // Mathematics
       "Set Theory","Inequalities","Logarithm","Modulus","Functions (Basics)","Quadratic Equations","Complex Numbers","Trigonometry","Sequences",
       // Biology
